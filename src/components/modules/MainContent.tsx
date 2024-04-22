@@ -46,7 +46,7 @@ const renderArticleList = (
 ) => {
 	const articleItems = articles.map((news) => ({
 		title: news.webTitle || news.abstract || news.title,
-		source: news.pillarId || news.source || news.source.name,
+		source: news.pillarId || news.source.name || news.source,
 		category: news.sectionName || news.section_name || "News Api",
 		date: news.webPublicationDate || news.pub_date || news.publishedAt,
 		id: news.id || news._id || news.title,
@@ -54,7 +54,9 @@ const renderArticleList = (
 	}));
 
 	return (
-		(filterOptions.source === "" || filterOptions.source === title) && (
+		(filterOptions.source === "" ||
+			filterOptions.source === undefined ||
+			filterOptions.source === title) && (
 			<ArticleList title={title} articles={articleItems} loading={loading} />
 		)
 	);

@@ -84,6 +84,7 @@ const FilterOptions: React.FC<{
 					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 						setFilters({ ...filters, date: e.target.value })
 					}
+					value={filters.date || ""}
 				/>
 			</div>
 			<div className="text-black border-b px-2 py-2 w-full hover:bg-white">

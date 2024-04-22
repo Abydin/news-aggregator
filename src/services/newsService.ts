@@ -20,8 +20,10 @@ export const useNewsArticles = () => {
 	const { data: newsApi, isLoading: newsApiLoading } = useQuery({
 		queryFn: async () => {
 			let endpoint = newsApiBaseURL;
-			endpoint += `to=${new Date(date).toISOString().split("T")[0]}&`;
-			if (date) endpoint += `to=${new Date(date).toISOString().split("T")[0]}&`;
+			if (date)
+				endpoint += `to=${new Date(date).toISOString().split("T")[0]}&from=${
+					new Date(date).toISOString().split("T")[0]
+				}&`;
 			if (searchWord) endpoint += `q=${searchWord}&`;
 			if (category) endpoint += `category=${category}&`;
 			const { data } = await axiosInstance.get<NewsApiResponse>(
