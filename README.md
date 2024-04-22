@@ -1,46 +1,58 @@
-# Getting Started with Create React App
+This are the steps to containerized the news aggregator frontend application on docker:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```Dockerfile
 
-## Available Scripts
+# Create Dockerfile in the root of the application
+touch Dockerfile
 
-In the project directory, you can run:
+# Use Node.js LTS version as the base image
+FROM node:18-alpine
 
-### `npm start`
+# Set the working directory in the container
+WORKDIR /app
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# Copy package.json and package-lock.json (if present) to the container
+COPY package*.json ./
 
-### `npm test`
+# Copy the yarn.lock file
+COPY yarn.lock ./
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Install dependencies
+RUN yarn install
 
-### `npm run build`
+# Copy the entire project to the container
+COPY . ./
+# Start the nginx server
+CMD ["yarn", "start"]
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Expose port 3000
+EXPOSE 3000
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
+With this Dockerfile, you'll build your React app in a Node.js environment and then serve the built files using Nginx. Here's how you can run the project within a Docker container:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. **Build the Docker image**:
+   Open a terminal, navigate to the directory where your Dockerfile is located, and run the following command to build the Docker image:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```
+   docker build -t news-aggregator .
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. **Run the Docker container**:
+   Once the Docker image is built, you can run a container based on that image using the following command:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+   ```
+   docker run -dp 127.0.0.1:3000:3000 news-aggregator
+   ```
 
-## Learn More
+   This command runs the Docker container in detached mode (`-d`) (-p) flag (short for --publish) , exposing port 3000 on your host machine and mapping it to port 3000 in the container.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+3. **Access your React application**:
+   You can now access your React application by opening a web browser and navigating to `http://localhost:3000`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+That's it! Your React application should now be running inside a Docker container.
