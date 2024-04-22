@@ -1,58 +1,66 @@
-This are the steps to containerized the news aggregator frontend application on docker:
 
-```Dockerfile
+## News Aggregator
 
-# Create Dockerfile in the root of the application
-touch Dockerfile
+Welcome to the take-home challenge for the Frontend web developer position. We are excited to see your skills and experience in action. The challenge is to create the user interface for a news aggregator website that pulls articles from various sources and displays them in a clean, easy-to-read format.
 
-# Use Node.js LTS version as the base image
-FROM node:18-alpine
+### Requirements:
 
-# Set the working directory in the container
-WORKDIR /app
+1. **Article search and filtering**: Users should be able to search for articles by keyword and filter the results by date, category, and source.
+2. **Personalized news feed**: Users should be able to customize their news feed by selecting their preferred sources, and categories.
+3. **Mobile-responsive design**: The website should be optimized for viewing on mobile devices.
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
+### Containerizing the News Aggregator Frontend Application with Docker:
 
-# Copy package.json and package-lock.json (if present) to the container
-COPY package*.json ./
+To containerize the news aggregator frontend application on Docker, follow these steps:
 
-# Copy the yarn.lock file
-COPY yarn.lock ./
+1. **Create Dockerfile**:
+   Create a Dockerfile in the root of your application directory. You can use the following Dockerfile:
 
-# Install dependencies
-RUN yarn install
+   ```Dockerfile
+   # Use Node.js LTS version as the base image
+   FROM node:18-alpine
 
-# Copy the entire project to the container
-COPY . ./
-# Start the nginx server
-CMD ["yarn", "start"]
+   # Set the working directory in the container
+   WORKDIR /app
 
-# Expose port 3000
-EXPOSE 3000
+   # add `/app/node_modules/.bin` to $PATH
+   ENV PATH /app/node_modules/.bin:$PATH
 
+   # Copy package.json and package-lock.json (if present) to the container
+   COPY package*.json ./
 
-```
+   # Copy the yarn.lock file
+   COPY yarn.lock ./
 
-With this Dockerfile, you'll build your React app in a Node.js environment and then serve the built files using Nginx. Here's how you can run the project within a Docker container:
+   # Install dependencies
+   RUN yarn install
 
-1. **Build the Docker image**:
+   # Copy the entire project to the container
+   COPY . ./
+
+   # Start the nginx server
+   CMD ["yarn", "start"]
+
+   # Expose port 3000
+   EXPOSE 3000
+   ```
+
+2. **Build the Docker image**:
    Open a terminal, navigate to the directory where your Dockerfile is located, and run the following command to build the Docker image:
 
    ```
    docker build -t news-aggregator .
    ```
 
-2. **Run the Docker container**:
+3. **Run the Docker container**:
    Once the Docker image is built, you can run a container based on that image using the following command:
 
    ```
    docker run -dp 127.0.0.1:3000:3000 news-aggregator
    ```
 
-   This command runs the Docker container in detached mode (`-d`) (-p) flag (short for --publish) , exposing port 3000 on your host machine and mapping it to port 3000 in the container.
+   This command runs the Docker container in detached mode (`-d`), exposing port 3000 on your host machine and mapping it to port 3000 in the container.
 
-3. **Access your React application**:
+4. **Access your React application**:
    You can now access your React application by opening a web browser and navigating to `http://localhost:3000`.
 
-That's it! Your React application should now be running inside a Docker container.
